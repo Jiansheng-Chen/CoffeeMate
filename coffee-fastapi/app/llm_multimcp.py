@@ -23,9 +23,7 @@ class MCPClient:
         self.model=config.get("Model")
 
     async def connect_to_server(self, server_name: str, server_url: str):
-        if (server_name in self.server_dict.keys()):
-            print("mcp server ({server_name} : {server_link}) has already connected")
-            return
+        
         try:
             exit_stack = AsyncExitStack()
             stdio_transport = await exit_stack.enter_async_context(streamablehttp_client(server_url))
@@ -35,10 +33,10 @@ class MCPClient:
             lock = asyncio.Lock()
             response=None
             async with lock:
-                response = await self.session.list_tools()
+                response = await session.list_tools()
             tools = response.tools
             print(f"\nConnected to server ({server_name}, {server_url}) with tools:", [tool.name for tool in tools])
-            tools_openai = [ await self._convert_tool(server_name, tool) for tool in tools.tools]
+            tools_openai = [ await self._convert_tool(server_name, tool) for tool in tools]
             
             self.connections[server_name] = {
                 "server_url" : server_url,
@@ -58,7 +56,6 @@ class MCPClient:
         for server_name, server_url in self.server_dict.items():
             await self.connect_to_server(server_name, server_url)
         print("successfully connect to all mcp_servers")
-
 
 
     async def _convert_tool(self, server_name : str, mcp_tool: dict[str, Any]) -> dict[str, Any]:
@@ -165,5 +162,4 @@ class MCPClient:
         print(f"disconnect from all mcp_server")
         self.connections=None
         self.server_dict=None
-
 mcp_client=MCPClient(config.get("MCP_SERVER"))

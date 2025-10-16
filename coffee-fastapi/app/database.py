@@ -36,3 +36,4 @@ class CoffeeDB:
             self.client=None
             self.db = None
             logging.info("MongoDB连接已关闭")
+coffeedb = CoffeeDB()

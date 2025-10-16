@@ -1,10 +1,17 @@
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import dialogue, user
-from .dependencies import coffeedb
+from .database import coffeedb
 from .llm_multimcp import mcp_client
 import os
+from .Config import config
+from contextlib import asynccontextmanager
+
+
+
+
 app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:10533"],  # 前端地址

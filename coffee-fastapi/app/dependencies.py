@@ -20,6 +20,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 coffeedb = CoffeeDB()
 
+
 async def get_db():
     if(coffeedb.db is not None):
         return coffeedb.db
