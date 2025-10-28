@@ -51,4 +51,4 @@ jobs:
         script: |
           cd /home/ec2-user/CoffeeMate
           git pull origin main
-          ./deploy.sh
+          bash ./deploy.sh
