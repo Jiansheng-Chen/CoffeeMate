@@ -27,7 +27,40 @@ Built with modern web technologies (**Vue**, **Fastapi**) and enhanced by **MCP*
 - Node.js >= 16
 - Python >= 3.10
 
-### Installation & Run
+### Installation & Run for Linux (AWS Linux 2023)
+
+```bash
+cd /coffee_mcp
+cat > config.json << 'EOF'
+{
+    "MCP_NAME": "coffee-mcp",
+    "MCP_HOST" : "0.0.0.0",
+    "MCP_PORT" : "8001",
+    "API_KEY" : "<qwen_embedding_api_key>",
+    "BASE_URL" : "<qwen_embedding_base_url, default : https://dashscope.aliyuncs.com/compatible-mode/v1>",
+    "EMBEDDING_MODEL" : "<embedding_model, default : text-embedding-v3>"
+}
+EOF
+cd /coffee-fastapi
+cat > ./app/config.json << 'EOF'
+{
+    "LLM_API_KEY" :  "<your_llm_api_key>",
+    "Base_URL" : "<base_url, default : https://dashscope.aliyuncs.com/compatible-mode/v1>",
+    "Model" : "<model_name, default : qwen-plus>",
+    "MongoDB_URI" : "<your_mongodb_connect_string>",
+    "MongoDB_db_name" : "coffee-db",
+    "MCP_SERVER" : {
+        "howtocook" : "http://localhost:8080/mcp",
+        "coffee-mcp" : "http://localhost:8001"
+    }
+}
+cd /
+source deploy.sh
+```
+
+
+
+### Installation & Run for windows
 
 #### 1. Clone the repo & download uv
 
@@ -40,13 +73,14 @@ pip install uv
 
 ```bash
 #server 1
-cd HowToCook-mcp-master/HowToCook-mcp-master
+cd /HowToCook-mcp-master/HowToCook-mcp-master
 npm install
 npm run build
 node build/index.js --transport http --port 8080
 #server 2
-cd coffee_mcp
+cd /coffee_mcp
 uv venv
+./.venv/Scripts/activate
 uv pip install -r requirements.txt
 ./.venv/Scripts/activate
 cat > config.json << 'EOF'
@@ -59,13 +93,15 @@ cat > config.json << 'EOF'
     "EMBEDDING_MODEL" : "<embedding_model, default : text-embedding-v3>"
 }
 EOF
-python main.py
+python mcp_server.py
 ```
 
 #### 3. Start the backend
 
 ```bash
-cd coffee-fastapi
+cd /coffee-fastapi
+uv venv
+./.venv/Scripts/activate
 pip install -r requirements.txt
 ./venv/Script/activate
 cat > ./app/config.json << 'EOF'
@@ -86,9 +122,9 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 #### 4. Start the frontend
 
 ```bash
-cd coffee-vue
+cd /coffee-vue
 npm install
-npm run build
+npm run dev
 ```
 
 ## 👀 Website Preview
