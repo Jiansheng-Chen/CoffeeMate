@@ -11,7 +11,7 @@ git pull origin main
 cd /home/ec2-user/CoffeeMate/HowToCook-mcp-master/HowToCook-mcp-master
 npm ci
 npm run build
-node build/index.js --transport http --port 8080
+
 
 # 3. mcp服务器2
 cd /home/ec2-user/CoffeeMate/coffee_mcp
