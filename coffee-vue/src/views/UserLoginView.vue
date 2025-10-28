@@ -129,8 +129,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
       console.log('submit!')
        try {
         const params = new URLSearchParams()
-        console.log("ruleForm:",ruleForm.username)
-        console.log("ruleForm:",ruleForm.password)
+        
         params.append('username', ruleForm.username)
         params.append('password', ruleForm.password)
         params.append('grant_type', 'password')

@@ -108,6 +108,26 @@ async def verify_token(token : str) -> dict:
             detail = str(e) if str(e) in ["Token has no expiration time", "Token has expired"] else "Could not validate credentials",
             headers = {"WWW-Authenticate": "Bearer"},
         )
+    
+async def verify_reset_password_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        expire = payload.get("exp")
+        email = payload.get("email")
+        if expire is None:
+            raise JWTError("Token has no expiration time")
+        if datetime.utcnow() >= datetime.fromtimestamp(expire):
+            raise JWTError("Token has expired")
+        return email
+
+
+    except JWTError as e:
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = str(e) if str(e) in ["Token has no expiration time", "Token has expired"] else "Could not validate credentials",
+            headers = {"WWW-Authenticate": "Bearer"},
+        )
+
 
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db = Depends(get_db)):
@@ -151,3 +171,8 @@ async def get_current_dialogue_user(
     else:
         return current_user
 
+async def create_password_reset_token(email: str) -> str:
+    RESET_TOKEN_EXPIRE_MINUTES = config.get("RESET_TOKEN_EXPIRE_MINUTES")
+    expire = datetime.utcnow() + timedelta(minutes=RESET_TOKEN_EXPIRE_MINUTES)
+    to_encode = {"exp": expire, "sub": email}
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
