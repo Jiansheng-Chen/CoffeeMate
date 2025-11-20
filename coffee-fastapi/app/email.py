@@ -1,4 +1,4 @@
-from Config import config
+from .Config import config
 import aiosmtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
