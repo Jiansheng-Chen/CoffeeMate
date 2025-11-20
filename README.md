@@ -30,6 +30,11 @@ Built with modern web technologies (**Vue**, **Fastapi**) and enhanced by **MCP*
 ### Installation & Run for Linux (AWS Linux 2023)
 
 ```bash
+cd /home/ec2-user
+mkdir CoffeeMate
+cd CoffeeMate
+git clone https://github.com/Jiansheng-Chen/CoffeeMate.git
+pip install uv
 cd /coffee_mcp
 cat > config.json << 'EOF'
 {
@@ -41,7 +46,7 @@ cat > config.json << 'EOF'
     "EMBEDDING_MODEL" : "<embedding_model, default : text-embedding-v3>"
 }
 EOF
-cd /coffee-fastapi
+cd ../coffee-fastapi
 cat > ./app/config.json << 'EOF'
 {
     "LLM_API_KEY" :  "<your_llm_api_key>",
@@ -54,7 +59,7 @@ cat > ./app/config.json << 'EOF'
         "coffee-mcp" : "http://localhost:8001"
     }
 }
-cd /
+cd ../
 source deploy.sh
 ```
 
