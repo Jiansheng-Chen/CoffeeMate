@@ -97,7 +97,7 @@ const sendMessageStream = async (message) => {
                 query.value=''
                 currentResponse.value="思考中..."
 
-                const response = await fetch('http://localhost:8000/dialogue/chat', {
+                const response = await fetch('/api/dialogue/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -209,7 +209,7 @@ const load_dialogues = async (id) => {
       }
       else{
         console.log("从数据库get_history_by_id")
-        const response = await apiClient.post('/dialogue/get_history_by_id',{dialogue_id:id})
+        const response = await apiClient.post('/api/dialogue/get_history_by_id',{dialogue_id:id})
         dialogue_history.value = response.data.history
         dialogue_title.value = response.data.title
         console.log("从数据库get_history_by_id后，得到的来自服务器的回答：",response.data)

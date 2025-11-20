@@ -154,7 +154,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
         formData.append('email', ruleForm.email)
         formData.append('name', ruleForm.name)
         formData.append('password', ruleForm.password)
-        const response = await axios.post('http://localhost:8000/user/register', formData,{
+        const response = await axios.post('/api/user/register', formData,{
           headers:{
             'Content-Type': 'application/x-www-form-urlencoded',
           },

@@ -1,10 +1,22 @@
 #!/bin/bash
 set -e
-
-cd /home/ec2-user/CoffeeMate
-
 # 1. 拉取代码
-git pull origin main
+COFFEE_DIR="/home/ec2-user/CoffeeMate"
+REMOTE_URL="https://github.com/Jiansheng-Chen/CoffeeMate.git"
+cd /home/ec2-user
+
+if [! -d "$COFFEE_DIR"]; then
+    git clone $REMOTE_URL CoffeeMate
+else
+    cd CoffeeMate
+    if ! git remote get-url origin &>/dev/null; then
+        echo "Adding remote origin..."
+        git remote add origin $REMOTE_URL
+    fi
+    echo "Pulling latest code..."
+    git pull origin main
+fi
+
 
 
 # 2.mcp服务器1
@@ -87,33 +99,9 @@ sudo systemctl daemon-reload
 sudo systemctl enable coffee-mcp.service
 sudo systemctl start coffee-mcp.service
 
-# 8.写入vue前端的nginx服务
-if ! rpm -q nginx &> /dev/null; then
-    echo "Installing Nginx..."
-    sudo dnf install -y nginx
-    sudo systemctl enable nginx --now
-fi
 
-sudo rm -rf /usr/share/nginx/html/*
-sudo cp -r /home/ec2-user/CoffeeMate/coffee-vue/dist/* /usr/share/nginx/html/
 
-sudo tee /etc/nginx/conf.d/coffee-vue.conf <<EOF
-server {
-    listen 80;
-    server_name _;
-
-    root /usr/share/nginx/html;
-    index index.html;
-
-    location / {
-        try_files \$uri \$uri/ /index.html;
-    }
-}
-EOF
-
-sudo nginx -t && sudo systemctl reload nginx
-
-# 9.写入后端服务
+# 8.写入后端服务
 sudo tee /etc/systemd/system/coffee-fastapi.service <<EOF
 [Unit]
 Description=Coffee Backend
@@ -123,7 +111,7 @@ After=network.target
 Type=simple
 User=ec2-user
 WorkingDirectory=/home/ec2-user/CoffeeMate/coffee-fastapi
-ExecStart=/home/ec2-user/CoffeeMate/coffee-fastapi/.venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000
+ExecStart=/home/ec2-user/CoffeeMate/coffee-fastapi/.venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000
 Restart=always
 RestartSec=5
 StandardOutput=journal
@@ -135,4 +123,39 @@ EOF
 
 sudo systemctl daemon-reload
 sudo systemctl enable coffee-fastapi.service --now
+
+# 9.写入前端代理以及后端反向代理的nginx服务
+if ! rpm -q nginx &> /dev/null; then
+    echo "Installing Nginx..."
+    sudo dnf install -y nginx
+    sudo systemctl enable nginx --now
+fi
+
+sudo rm -rf /usr/share/nginx/html/*
+sudo cp -r /home/ec2-user/CoffeeMate/coffee-vue/dist/* /usr/share/nginx/html/
+
+sudo tee /etc/nginx/conf.d/coffeemate.conf <<EOF
+server {
+    listen 80;
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files \$uri \$uri/ /index.html;
+    }
+
+    location /api {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+}
+EOF
+
+sudo nginx -t && sudo systemctl reload nginx
+
 echo "✅ Deployment completed on Amazon Linux 2023!"

@@ -136,7 +136,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 
         
         const response = await axios.post(
-          'http://localhost:8000/user/login',
+          '/api/user/login',
           params, 
           {
             headers: {
@@ -159,7 +159,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
         authStore.setIsLogged(true)
         
         dialoguesStore.clear()
-        const response_dialogue = await apiClient.post('/dialogue/get_ids_titles')
+        const response_dialogue = await apiClient.post('/api/dialogue/get_ids_titles')
         dialoguesStore.setDialogue(response_dialogue.data)
         
         
@@ -182,7 +182,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
           router.push(`/dialogue/${to_dialogue_id}`)
         }
         else{
-          const new_dialogue = await apiClient.post(`/dialogue/get_new_dialogue`)
+          const new_dialogue = await apiClient.post(`/api/dialogue/get_new_dialogue`)
           dialoguesStore.addDialogue(new_dialogue.data)
           console.log(`new_dialogue in UserLogin: ${new_dialogue.data}`)
           router.push(`/dialogue/${new_dialogue.data.id}`)

@@ -122,7 +122,7 @@ const new_dialogue = async () => {
   try{
     
     
-    const new_dialogue = await apiClient.post(`/dialogue/get_new_dialogue`)
+    const new_dialogue = await apiClient.post(`/api/dialogue/get_new_dialogue`)
     dialoguesStore.addDialogue(new_dialogue.data)
     router.push(`/dialogue/${new_dialogue.data.id}`)
     
