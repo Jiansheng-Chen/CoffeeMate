@@ -1,4 +1,4 @@
-from .database import CoffeeDB
+from .database import coffeedb
 from typing import AsyncGenerator, Optional
 import logging      
 from datetime import datetime, timedelta, timezone
@@ -18,7 +18,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
-coffeedb = CoffeeDB()
+
 
 
 async def get_db():

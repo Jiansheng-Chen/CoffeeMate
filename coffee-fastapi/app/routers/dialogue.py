@@ -11,7 +11,7 @@ import asyncio
 from pydantic_core import core_schema
 
 router = APIRouter(
-    prefix="/dialogue",
+    prefix="/api/dialogue",
     tags=["dialogue"],
     responses={404: {"description" : "Not found"}},
 )

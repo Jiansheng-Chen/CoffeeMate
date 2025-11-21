@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from ..email import send_reset_email
 
 router = APIRouter(
-    prefix="/user",
+    prefix="/api/user",
     tags=["user"],
     responses={404: {"description" : "Not found"}},
 )
