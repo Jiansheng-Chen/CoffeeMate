@@ -71,8 +71,8 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
+sudo systemctl restart howtocook-mcp.service
 sudo systemctl enable howtocook-mcp.service
-sudo systemctl start howtocook-mcp.service
 
 # 7.写入mcp服务器2的服务
 sudo tee /etc/systemd/system/coffee-mcp.service <<EOF
@@ -96,8 +96,9 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
+sudo systemctl restart coffee-mcp.service
 sudo systemctl enable coffee-mcp.service
-sudo systemctl start coffee-mcp.service
+
 
 
 
@@ -122,6 +123,7 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
+sudo systemctl restart coffee-fastapi.service
 sudo systemctl enable coffee-fastapi.service --now
 
 # 9.写入前端代理以及后端反向代理的nginx服务
@@ -136,7 +138,8 @@ sudo cp -r /home/ec2-user/CoffeeMate/coffee-vue/dist/* /usr/share/nginx/html/
 
 sudo tee /etc/nginx/conf.d/coffeemate.conf <<EOF
 server {
-    listen 80;
+    listen 80 default_server;
+    listen [::]:80 default_server;
     server_name _;
 
     root /usr/share/nginx/html;
